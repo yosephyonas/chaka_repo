@@ -1,30 +1,36 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+import 'package:countries/service/country_service.dart';
+import 'package:countries/statemanagment/countries_provider.dart';
+import 'package:countries/view/country_ListPage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-import 'package:countries/main.dart';
+void main() async {
+  // Initialize Hive
+  await Hive.initFlutter();
 
-void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const CountryApp());
+  runApp(const CountryApp());
+}
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+class CountryApp extends StatelessWidget {
+  const CountryApp({super.key});
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
-  });
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) =>
+              CountriesProvider(CountryService()),
+              
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Explore Country',
+        theme: ThemeData(primarySwatch: Colors.teal),
+        home: CountryListPage(),
+      ),
+    );
+  }
 }
